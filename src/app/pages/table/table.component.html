@@ -33,52 +33,53 @@
       <th>
         Cliente
         <p-columnFilter field="idCliente" matchMode="in" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false">
-          <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-            <p-select
-              [(ngModel)]="selectedClientes"
-              [options]="clientes"
-              optionLabel="nome"
-              optionValue="id"
-              placeholder="Selecione o cliente"
-              (onChange)="dt1.filter(selectedClientes, 'idCliente', 'in')"
-              class="w-full"
-            />
-          </ng-template>
-        </p-columnFilter>
+            <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+              <p-select
+                [(ngModel)]="selectedCliente"
+                [options]="clientes"
+                optionLabel="nome"
+                optionValue="id"
+                placeholder="Selecione os clientes"
+                (onChange)="aplicarFiltros()"
+                class="w-full"
+              />
+            </ng-template>
+          </p-columnFilter>
       </th>
       <th>ID Fundo</th>
       <th>CNPJ Fundo</th>
       <th>
         Fundo
         <p-columnFilter field="idFundo" matchMode="in" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false">
-          <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-            <p-select
-              [(ngModel)]="selectedFundos"
-              [options]="fundos"
-              optionLabel="nome"
-              optionValue="id"
-              placeholder="Selecione o fundo"
-              (onChange)="dt1.filter(selectedFundos, 'idFundo', 'in')"
-              class="w-full"
-            />
-          </ng-template>
-        </p-columnFilter>
+            <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+              <p-select
+                [(ngModel)]="selectedFundo"
+                [options]="fundos"
+                optionLabel="nome"
+                optionValue="id"
+                placeholder="Selecione os fundos"
+                (onChange)="aplicarFiltros()"
+                class="w-full"
+              />
+            </ng-template>
+          </p-columnFilter>
+          
       </th>
       <th>
         Situação
-        <p-columnFilter field="idSituacao" matchMode="in" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false">
-          <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-            <p-multiselect
-              [(ngModel)]="selectedSituacoes"
-              [options]="situacoes"
-              optionLabel="nome"
-              optionValue="id"
-              placeholder="Selecione"
-              (onChange)="dt1.filter(selectedSituacoes, 'idSituacao', 'in')"
-              class="w-full"
-            />
-          </ng-template>
-        </p-columnFilter>
+        <p-columnFilter field="idsSituacoes" matchMode="in" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false">
+            <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+              <p-multiSelect
+                [(ngModel)]="selectedSituacoes"
+                [options]="situacoes"
+                optionLabel="descricao"
+                optionValue="id"
+                placeholder="Selecione as situações"
+                (onChange)="aplicarFiltros()"
+                class="w-full"
+              />
+            </ng-template>
+          </p-columnFilter>
       </th>
       <th>
         Tipo Operação

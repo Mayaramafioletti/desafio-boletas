@@ -46,9 +46,9 @@ export class TableComponent implements OnInit {
   fundos: any[] = [];
   situacoes: any[] = [];
 
-  selectedClientes: any[] = [];
-  selectedFundos: any[] = [];
-  selectedSituacoes: any[] = [];
+  selectedCliente: number | null = null;
+  selectedFundo: number | null = null;
+  selectedSituacoes: number[] = [];
 
   constructor(
     private boletaService: BoletaCotaFundoService,
@@ -58,29 +58,52 @@ export class TableComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.clientesService.getClientes().subscribe((res) => (this.clientes = res));
+    this.fundosService.getFundos().subscribe((res) => (this.fundos = res));
+    this.situacoesService.getSituacoes().subscribe((res) => (this.situacoes = res));
+
+    this.aplicarFiltros(); // Buscar dados iniciais
+  }
+
+  aplicarFiltros() {
+    const filtros: any = {
+      page: 0,
+      size: 20,
+    };
+
+    if (this.selectedCliente) {
+      console.log(this.selectedCliente)
+      filtros['idCliente'] = this.selectedCliente;
+    }
+
+    if (this.selectedFundo) {
+      filtros['idFundo'] = this.selectedFundo;
+    }
+
+    if (this.selectedSituacoes.length > 0) {
+      filtros['idsSituacoes'] = this.selectedSituacoes.join(',');
+    }
+
     this.loading = true;
 
-    this.boletaService.pesquisar({ page: 0, size: 20 }).subscribe({
+    this.boletaService.pesquisar(filtros).subscribe({
       next: (res) => {
         this.boletas = res.elementos;
         this.loading = false;
       },
       error: (err) => {
-        console.error('Erro ao buscar boletas:', err);
+        console.error('Erro ao aplicar filtros:', err);
         this.loading = false;
       },
     });
-
-    this.clientesService.getClientes().subscribe((res) => (this.clientes = res));
-    this.fundosService.getFundos().subscribe((res) => (this.fundos = res));
-    this.situacoesService.getSituacoes().subscribe((res) => (this.situacoes = res));
   }
 
   clear(table: Table) {
     table.clear();
     this.searchValue = '';
-    this.selectedClientes = [];
-    this.selectedFundos = [];
+    this.selectedCliente = null;
+    this.selectedFundo = null;
     this.selectedSituacoes = [];
+    this.aplicarFiltros();
   }
 }
