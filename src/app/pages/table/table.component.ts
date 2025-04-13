@@ -41,7 +41,13 @@ export class TableComponent implements OnInit {
   boletas: BoletaCotaFundo[] = [];
   loading: boolean = true;
   searchValue: string | undefined;
-
+  tiposOperacao: { label: string; value: string }[] = [
+    { label: 'Aplicação', value: 'A' },
+    { label: 'Resgate Parcial', value: 'RP' },
+    { label: 'Resgate Total', value: 'RT' },
+  ];
+  
+  selectedTiposOperacao: string[] = [];
   clientes: any[] = [];
   fundos: any[] = [];
   situacoes: any[] = [];
@@ -89,6 +95,9 @@ export class TableComponent implements OnInit {
     }
     if (this.codigoOperacao !== null) {
       filtros['idBoletaCotaFundo'] = this.codigoOperacao;
+    }
+    if (this.selectedTiposOperacao.length > 0) {
+      filtros['codigoTipoOperacao'] = this.selectedTiposOperacao.join(',');
     }
     this.loading = true;
 

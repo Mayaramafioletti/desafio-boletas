@@ -94,7 +94,27 @@
       </th>
       <th>
         Tipo Operação
-        <p-columnFilter type="text" field="descricaoTipoOperacao" display="menu" />
+        <p-columnFilter
+          field="tipoOperacao"
+          matchMode="in"
+          display="menu"
+          [showMatchModes]="false"
+          [showOperator]="false"
+          [showAddButton]="false"
+          [showApplyButton]="false"
+        >
+          <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+            <p-multiSelect
+              [(ngModel)]="selectedTiposOperacao"
+              [options]="tiposOperacao"
+              optionLabel="label"
+              optionValue="value"
+              placeholder="Selecione os tipos"
+              (onChange)="aplicarFiltros()"
+              class="w-full"
+            />
+          </ng-template>
+        </p-columnFilter>
       </th>
       <th>
         Data
