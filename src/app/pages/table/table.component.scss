@@ -1,10 +1,20 @@
-:host ::ng-deep {
-    .p-progressbar {
-        height: .5rem;
-        background-color: #D8DADC;
+.header {
+    display: flex;
+    align-items: center;
+}
 
-        .p-progressbar-value {
-            background-color: #607D8B;
-        }
+::ng-deep {
+
+    .p-icon {
+        height: 15px !important;
+    }
+
+    .p-datatable-tbody>tr>td {
+        padding: 16px 8px;
+        font-size: 14px;
+    }
+
+    .p-datatable-thead>tr>th {
+        padding: 8px;
     }
 }

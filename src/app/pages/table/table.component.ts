@@ -16,6 +16,8 @@ import { ClientesService } from '../../services/clientes.service';
 import { FundosService } from '../../services/fundos.service';
 import { SituacoesService } from '../../services/situacoes.service';
 import { Table, TableModule } from 'primeng/table';
+import { CalendarModule } from 'primeng/calendar';
+import { debounceTime, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-table',
@@ -33,6 +35,7 @@ import { Table, TableModule } from 'primeng/table';
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
+    CalendarModule
   ],
   templateUrl: './table.component.html',
   styleUrl: './table.component.scss',
@@ -55,6 +58,11 @@ export class TableComponent implements OnInit {
   selectedCliente: number | null = null;
   selectedFundo: number | null = null;
   selectedSituacoes: number[] = [];
+  rangeDatas: Date[] = [];
+  valorFinanceiroMin: number | null = null;
+valorFinanceiroMax: number | null = null;
+  valorFinanceiroMin$: Subject<number> = new Subject<number>();
+valorFinanceiroMax$: Subject<number> = new Subject<number>();
 
   constructor(
     private boletaService: BoletaCotaFundoService,
@@ -71,14 +79,26 @@ export class TableComponent implements OnInit {
       console.log(res)
       console.log('Situações carregadas:', this.situacoes);
     });
+    this.valorFinanceiroMin$
+    .pipe(debounceTime(400))
+    .subscribe((val) => {
+      this.valorFinanceiroMin = val;
+      this.aplicarFiltros();
+    });
 
+  this.valorFinanceiroMax$
+    .pipe(debounceTime(400))
+    .subscribe((val) => {
+      this.valorFinanceiroMax = val;
+      this.aplicarFiltros();
+    });
     this.aplicarFiltros(); // Buscar dados iniciais
   }
 
   aplicarFiltros() {
     const filtros: any = {
       page: 0,
-      size: 20,
+      size: 50,
     };
 
     if (this.selectedCliente) {
@@ -98,6 +118,19 @@ export class TableComponent implements OnInit {
     }
     if (this.selectedTiposOperacao.length > 0) {
       filtros['codigoTipoOperacao'] = this.selectedTiposOperacao.join(',');
+    }
+    if (this.rangeDatas && this.rangeDatas.length === 2) {
+      const [dataInicio, dataFim] = this.rangeDatas;
+      if (dataInicio && dataFim) {
+        filtros['dataOperacaoDe'] = dataInicio.toISOString().split('T')[0];
+        filtros['dataOperacaoAte'] = dataFim.toISOString().split('T')[0];
+      }
+    }
+    if (this.valorFinanceiroMin !== null) {
+      filtros['valorFinanceiroDe'] = this.valorFinanceiroMin;
+    }
+    if (this.valorFinanceiroMax !== null) {
+      filtros['valorFinanceiroAte'] = this.valorFinanceiroMax;
     }
     this.loading = true;
 
