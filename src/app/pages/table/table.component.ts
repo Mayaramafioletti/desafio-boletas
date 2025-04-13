@@ -45,7 +45,7 @@ export class TableComponent implements OnInit {
   clientes: any[] = [];
   fundos: any[] = [];
   situacoes: any[] = [];
-
+  codigoOperacao: number | null = null;
   selectedCliente: number | null = null;
   selectedFundo: number | null = null;
   selectedSituacoes: number[] = [];
@@ -87,7 +87,9 @@ export class TableComponent implements OnInit {
     if (this.selectedSituacoes.length > 0) {
       filtros['idsSituacoes'] = this.selectedSituacoes.join(',');
     }
-
+    if (this.codigoOperacao !== null) {
+      filtros['idBoletaCotaFundo'] = this.codigoOperacao;
+    }
     this.loading = true;
 
     this.boletaService.pesquisar(filtros).subscribe({

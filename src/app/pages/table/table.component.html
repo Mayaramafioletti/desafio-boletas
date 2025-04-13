@@ -11,28 +11,39 @@
   <ng-template #caption>
     <div class="flex">
       <p-button label="Limpar" [outlined]="true" icon="pi pi-filter-slash" (click)="clear(dt1)" />
-      <p-iconfield iconPosition="left" class="ml-auto">
-        <p-inputicon>
-          <i class="pi pi-search"></i>
-        </p-inputicon>
-        <!-- <input
-          pInputText
-          type="text"
-          (input)="dt1.filterGlobal($event.target.value, 'contains')"
-          placeholder="Buscar"
-        /> -->
-      </p-iconfield>
     </div>
   </ng-template>
 
   <ng-template pTemplate="header">
     <tr>
-      <th>Cód. Operação</th>
+      <th>
+        Cód. Operação
+        <p-columnFilter
+          type="numeric"
+          field="id"
+          display="menu"
+          [showMatchModes]="false"
+          [showOperator]="false"
+          [showAddButton]="false"
+          [showApplyButton]="false"
+        >
+          <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+            <input
+              type="number"
+              pInputText
+              [(ngModel)]="codigoOperacao"
+              placeholder="Digite o código"
+              (ngModelChange)="aplicarFiltros()"
+              class="w-full"
+            />
+          </ng-template>
+        </p-columnFilter>
+      </th>
       <th>ID Cliente</th>
       <th>CPF/CNPJ Cliente</th>
       <th>
         Cliente
-        <p-columnFilter field="idCliente" matchMode="in" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false">
+        <p-columnFilter field="idCliente" matchMode="in" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false" [showApplyButton]="false">
             <ng-template pTemplate="filter" let-value let-filter="filterCallback">
               <p-select
                 [(ngModel)]="selectedCliente"
@@ -50,7 +61,7 @@
       <th>CNPJ Fundo</th>
       <th>
         Fundo
-        <p-columnFilter field="idFundo" matchMode="in" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false">
+        <p-columnFilter field="idFundo" matchMode="in" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false" [showApplyButton]="false">
             <ng-template pTemplate="filter" let-value let-filter="filterCallback">
               <p-select
                 [(ngModel)]="selectedFundo"
@@ -67,7 +78,7 @@
       </th>
       <th>
         Situação
-        <p-columnFilter field="idsSituacoes" matchMode="in" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false">
+        <p-columnFilter field="idsSituacoes" matchMode="in" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false" [showApplyButton]="false">
             <ng-template pTemplate="filter" let-value let-filter="filterCallback">
               <p-multiSelect
                 [(ngModel)]="selectedSituacoes"
