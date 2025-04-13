@@ -60,7 +60,11 @@ export class TableComponent implements OnInit {
   ngOnInit() {
     this.clientesService.getClientes().subscribe((res) => (this.clientes = res));
     this.fundosService.getFundos().subscribe((res) => (this.fundos = res));
-    this.situacoesService.getSituacoes().subscribe((res) => (this.situacoes = res));
+    this.situacoesService.getSituacoes().subscribe((res) => {
+      this.situacoes = res;
+      console.log(res)
+      console.log('Situações carregadas:', this.situacoes);
+    });
 
     this.aplicarFiltros(); // Buscar dados iniciais
   }
