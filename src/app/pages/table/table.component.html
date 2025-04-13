@@ -1,0 +1,119 @@
+<p-table
+  #dt1
+  [value]="boletas"
+  dataKey="id"
+  [rows]="10"
+  [rowsPerPageOptions]="[10, 25, 50]"
+  [loading]="loading"
+  [paginator]="true"
+  [globalFilterFields]="['nomeCliente', 'nomeFundo', 'nomeSituacao']"
+>
+  <ng-template #caption>
+    <div class="flex">
+      <p-button label="Limpar" [outlined]="true" icon="pi pi-filter-slash" (click)="clear(dt1)" />
+      <p-iconfield iconPosition="left" class="ml-auto">
+        <p-inputicon>
+          <i class="pi pi-search"></i>
+        </p-inputicon>
+        <!-- <input
+          pInputText
+          type="text"
+          (input)="dt1.filterGlobal($event.target.value, 'contains')"
+          placeholder="Buscar"
+        /> -->
+      </p-iconfield>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="header">
+    <tr>
+      <th>Cód. Operação</th>
+      <th>ID Cliente</th>
+      <th>CPF/CNPJ Cliente</th>
+      <th>
+        Cliente
+        <p-columnFilter field="idCliente" matchMode="in" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false">
+          <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+            <p-select
+              [(ngModel)]="selectedClientes"
+              [options]="clientes"
+              optionLabel="nome"
+              optionValue="id"
+              placeholder="Selecione o cliente"
+              (onChange)="dt1.filter(selectedClientes, 'idCliente', 'in')"
+              class="w-full"
+            />
+          </ng-template>
+        </p-columnFilter>
+      </th>
+      <th>ID Fundo</th>
+      <th>CNPJ Fundo</th>
+      <th>
+        Fundo
+        <p-columnFilter field="idFundo" matchMode="in" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false">
+          <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+            <p-select
+              [(ngModel)]="selectedFundos"
+              [options]="fundos"
+              optionLabel="nome"
+              optionValue="id"
+              placeholder="Selecione o fundo"
+              (onChange)="dt1.filter(selectedFundos, 'idFundo', 'in')"
+              class="w-full"
+            />
+          </ng-template>
+        </p-columnFilter>
+      </th>
+      <th>
+        Situação
+        <p-columnFilter field="idSituacao" matchMode="in" display="menu" [showMatchModes]="false" [showOperator]="false" [showAddButton]="false">
+          <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+            <p-multiselect
+              [(ngModel)]="selectedSituacoes"
+              [options]="situacoes"
+              optionLabel="nome"
+              optionValue="id"
+              placeholder="Selecione"
+              (onChange)="dt1.filter(selectedSituacoes, 'idSituacao', 'in')"
+              class="w-full"
+            />
+          </ng-template>
+        </p-columnFilter>
+      </th>
+      <th>
+        Tipo Operação
+        <p-columnFilter type="text" field="descricaoTipoOperacao" display="menu" />
+      </th>
+      <th>
+        Data
+        <p-columnFilter type="date" field="dataOperacao" display="menu" />
+      </th>
+      <th>
+        Valor
+        <p-columnFilter type="numeric" field="valorFinanceiro" display="menu" currency="BRL" />
+      </th>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-boleta>
+    <tr>
+      <td>{{ boleta.id }}</td>
+      <td>{{ boleta.idCliente }}</td>
+      <td>{{ boleta.cpfCnpjCliente }}</td>
+      <td>{{ boleta.nomeCliente }}</td>
+      <td>{{ boleta.idFundo }}</td>
+      <td>{{ boleta.cnpjFundo }}</td>
+      <td>{{ boleta.nomeFundo }}</td>
+      <td>{{ boleta.nomeSituacao }}</td>
+      <td>{{ boleta.descricaoTipoOperacao }}</td>
+      <td>{{ boleta.dataOperacao | date: 'dd/MM/yyyy' }}</td>
+      <td>{{ boleta.valorFinanceiro | currency: 'BRL' }}</td>
+    </tr>
+  </ng-template>
+
+  <ng-template #emptymessage>
+    <tr>
+      <td colspan="11">Nenhum resultado encontrado.</td>
+    </tr>
+  </ng-template>
+</p-table>
