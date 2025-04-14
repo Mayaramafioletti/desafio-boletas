@@ -8,14 +8,22 @@ import { DrawerModule } from 'primeng/drawer';
 import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { SelectModule } from 'primeng/select';
-import { Subject, debounceTime } from 'rxjs';
+import { MessageModule } from 'primeng/message';
+
 import { ClientesService } from '../../services/clientes.service';
 import { FundosService } from '../../services/fundos.service';
 import { SituacoesService } from '../../services/situacoes.service';
 import { FiltersService } from '../../services/filters.service';
-import { MessageService } from 'primeng/api';
-import { MessageModule } from 'primeng/message';
-
+type FiltrosKeys =
+  | 'selectedCliente'
+  | 'selectedFundo'
+  | 'selectedSituacoes'
+  | 'selectedTiposOperacao'
+  | 'codigoOperacao'
+  | 'dataInicio'
+  | 'dataFim'
+  | 'valorFinanceiroMin'
+  | 'valorFinanceiroMax';
 @Component({
   selector: 'app-filters',
   standalone: true,
@@ -29,50 +37,54 @@ import { MessageModule } from 'primeng/message';
     MultiSelectModule,
     CalendarModule,
     InputTextModule,
-    MessageModule 
+    MessageModule,
   ],
   templateUrl: './filters.component.html',
   styleUrl: './filters.component.scss',
 })
 export class FiltersComponent implements OnInit {
-  @Input() visible: boolean = false;
+  // Inputs e Outputs
+  @Input() visible = false;
   @Output() visibleChange = new EventEmitter<boolean>();
 
+  // Listas para os selects
   tiposOperacao = [
     { label: 'Aplicação', value: 'A' },
     { label: 'Resgate Parcial', value: 'RP' },
     { label: 'Resgate Total', value: 'RT' },
   ];
-
   clientes: any[] = [];
   fundos: any[] = [];
   situacoes: any[] = [];
 
+  // Valores selecionados
   selectedCliente: number | null = null;
   selectedFundo: number | null = null;
   selectedSituacoes: number[] = [];
   selectedTiposOperacao: string[] = [];
-
+  codigoOperacao: number | null = null;
   dataInicio: Date | null = null;
   dataFim: Date | null = null;
-
-  codigoOperacao: number | null = null;
   valorFinanceiroMin: number | null = null;
   valorFinanceiroMax: number | null = null;
 
-  valorFinanceiroMin$ = new Subject<number>();
-  valorFinanceiroMax$ = new Subject<number>();
+  // Mensagens de validação
+  mensagemData = '';
+  mensagemValor = '';
 
-  mensagemData: string = '';
-  mensagemValor: string = '';
   constructor(
     private clientesService: ClientesService,
     private fundosService: FundosService,
     private situacoesService: SituacoesService,
-    private filtersService: FiltersService,
+    private filtersService: FiltersService
   ) {}
 
   ngOnInit(): void {
+    this.carregarFiltrosIniciais();
+    this.subscreverFiltros();
+  }
+
+  private carregarFiltrosIniciais(): void {
     this.clientesService
       .getClientes()
       .subscribe((res) => (this.clientes = res));
@@ -80,60 +92,47 @@ export class FiltersComponent implements OnInit {
     this.situacoesService
       .getSituacoes()
       .subscribe((res) => (this.situacoes = res));
+  }
 
-    this.valorFinanceiroMin$.pipe(debounceTime(400)).subscribe((val) => {
-      this.valorFinanceiroMin = val;
-      this.emitirFiltros();
-    });
-
-    this.valorFinanceiroMax$.pipe(debounceTime(400)).subscribe((val) => {
-      this.valorFinanceiroMax = val;
-      this.emitirFiltros();
-    });
-
-    // 🔄 Escuta e sincroniza os filtros do serviço
+  private subscreverFiltros(): void {
     this.filtersService.filtros$.subscribe((filtros) => {
-      if (filtros) {
-        this.selectedCliente = filtros.idCliente ?? null;
-        this.selectedFundo = filtros.idFundo ?? null;
-        this.selectedSituacoes = filtros.idsSituacoes
-          ? Array.isArray(filtros.idsSituacoes)
-            ? filtros.idsSituacoes
-            : filtros.idsSituacoes.split(',').map((id: string) => +id)
-          : [];
+      if (!filtros) return;
 
-        this.selectedTiposOperacao = filtros.codigosTipoOperacao
-          ? filtros.codigosTipoOperacao.split(',')
-          : [];
+      this.selectedCliente = filtros.idCliente ?? null;
+      this.selectedFundo = filtros.idFundo ?? null;
 
-        this.codigoOperacao = filtros.idBoletaCotaFundo ?? null;
-        this.dataInicio = filtros.dataOperacaoDe
-          ? new Date(filtros.dataOperacaoDe)
-          : null;
-        this.dataFim = filtros.dataOperacaoAte
-          ? new Date(filtros.dataOperacaoAte)
-          : null;
-        this.valorFinanceiroMin = filtros.valorFinanceiroDe ?? null;
-        this.valorFinanceiroMax = filtros.valorFinanceiroAte ?? null;
-      }
+      this.selectedSituacoes = filtros.idsSituacoes
+        ? Array.isArray(filtros.idsSituacoes)
+          ? filtros.idsSituacoes
+          : filtros.idsSituacoes.split(',').map((id: string) => +id)
+        : [];
+
+      this.selectedTiposOperacao =
+        filtros.codigosTipoOperacao?.split(',') ?? [];
+      this.codigoOperacao = filtros.idBoletaCotaFundo ?? null;
+      this.dataInicio = filtros.dataOperacaoDe
+        ? new Date(filtros.dataOperacaoDe)
+        : null;
+      this.dataFim = filtros.dataOperacaoAte
+        ? new Date(filtros.dataOperacaoAte)
+        : null;
+      this.valorFinanceiroMin = filtros.valorFinanceiroDe ?? null;
+      this.valorFinanceiroMax = filtros.valorFinanceiroAte ?? null;
     });
   }
 
   emitirFiltros(): void {
-    // Validação de datas
     if (this.dataInicio && this.dataFim && this.dataFim < this.dataInicio) {
       this.mensagemData = 'Data final não pode ser anterior à data inicial.';
       return;
     }
 
-    // Validação de valores financeiros
     if (
       this.valorFinanceiroMin !== null &&
       this.valorFinanceiroMax !== null &&
       this.valorFinanceiroMax < this.valorFinanceiroMin
     ) {
-
-      this.mensagemValor= 'Valor máximo não pode ser menor que o valor mínimo';
+      this.mensagemValor = 'Valor máximo não pode ser menor que o valor mínimo';
       return;
     }
 
@@ -147,16 +146,11 @@ export class FiltersComponent implements OnInit {
       codigosTipoOperacao: this.selectedTiposOperacao.length
         ? this.selectedTiposOperacao.join(',')
         : undefined,
-      dataOperacaoDe: this.dataInicio
-        ? this.dataInicio.toISOString().split('T')[0]
-        : undefined,
-      dataOperacaoAte: this.dataFim
-        ? this.dataFim.toISOString().split('T')[0]
-        : undefined,
+      dataOperacaoDe: this.dataInicio?.toISOString().split('T')[0],
+      dataOperacaoAte: this.dataFim?.toISOString().split('T')[0],
       valorFinanceiroDe: this.valorFinanceiroMin ?? undefined,
       valorFinanceiroAte: this.valorFinanceiroMax ?? undefined,
     };
-    
 
     this.filtersService.atualizarFiltros(filtros);
   }
@@ -166,40 +160,14 @@ export class FiltersComponent implements OnInit {
     this.visibleChange.emit(this.visible);
   }
 
-  limparCodigoOperacao() {
-    this.codigoOperacao = null;
-    this.emitirFiltros();
-  }
-
-  limparCliente() {
-    this.selectedCliente = null;
-    this.emitirFiltros();
-  }
-
-  limparFundo() {
-    this.selectedFundo = null;
-    this.emitirFiltros();
-  }
-
-  limparSituacoes() {
-    this.selectedSituacoes = [];
-    this.emitirFiltros();
-  }
-
-  limparTiposOperacao() {
-    this.selectedTiposOperacao = [];
-    this.emitirFiltros();
-  }
-
-  limparDatas() {
-    this.dataInicio = null;
-    this.dataFim = null;
-    this.emitirFiltros();
-  }
-
-  limparValores() {
-    this.valorFinanceiroMin = null;
-    this.valorFinanceiroMax = null;
+  // Métodos para limpar filtros individualmente
+  limparCampo(campo: FiltrosKeys): void {
+    const valorAtual = this[campo];
+    if (Array.isArray(valorAtual)) {
+      this[campo] = [] as any;
+    } else {
+      this[campo] = null as any;
+    }
     this.emitirFiltros();
   }
 }

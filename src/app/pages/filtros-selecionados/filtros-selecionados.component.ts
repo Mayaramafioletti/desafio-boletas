@@ -17,13 +17,14 @@ export class FiltrosSelecionadosComponent implements OnInit {
   clientes: any[] = [];
   fundos: any[] = [];
   situacoes: any[] = [];
-
+  
   filtros: any = {};
   tiposOperacao = [
     { label: 'Aplicação', value: 'A' },
     { label: 'Resgate Parcial', value: 'RP' },
     { label: 'Resgate Total', value: 'RT' },
   ];
+
   constructor(
     private clientesService: ClientesService,
     private fundosService: FundosService,
@@ -32,72 +33,68 @@ export class FiltrosSelecionadosComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.clientesService.getClientes().subscribe(clientes => this.clientes = clientes);
-    this.fundosService.getFundos().subscribe(fundos => this.fundos = fundos);
-    this.situacoesService.getSituacoes().subscribe(situacoes => this.situacoes = situacoes);
+    this.carregarDadosIniciais();
     this.filtersService.filtros$.subscribe(f => this.filtros = f || {});
   }
 
+  private carregarDadosIniciais(): void {
+    this.clientesService.getClientes().subscribe(clientes => this.clientes = clientes);
+    this.fundosService.getFundos().subscribe(fundos => this.fundos = fundos);
+    this.situacoesService.getSituacoes().subscribe(situacoes => this.situacoes = situacoes);
+  }
+
   get nomeCliente(): string | null {
-    return this.clientes.find(c => c.id === this.filtros.idCliente)?.nome ?? null;
+    return this.buscarNomePorId(this.clientes, 'idCliente');
   }
 
   get nomeFundo(): string | null {
-    return this.fundos.find(f => f.id === this.filtros.idFundo)?.nome ?? null;
+    return this.buscarNomePorId(this.fundos, 'idFundo');
+  }
+
+  private buscarNomePorId(lista: any[], idCampo: string): string | null {
+    const id = this.filtros[idCampo];
+    return lista.find(item => item.id === id)?.nome ?? null;
   }
 
   get nomesSituacoesSelecionadas(): { id: number; nome: string }[] {
-    return this.situacoes
-      .filter(s => this.filtros.idsSituacoes?.includes(s.id))
-      .map(s => ({ id: s.id, nome: s.nome }));
+    return this.filtros.idsSituacoes
+      ? this.situacoes.filter(s => this.filtros.idsSituacoes.includes(s.id))
+      : [];
   }
+
   get nomesTiposOperacaoSelecionadas(): { label: string; value: string }[] {
-    const raw = this.filtros.codigosTipoOperacao;
-  
-    const valores = typeof raw === 'string'
-      ? raw.split(',')
-      : Array.isArray(raw)
-        ? raw
-        : [];
-  
-    return this.tiposOperacao.filter(t => valores.includes(t.value));
+    const tiposSelecionados = this.formatarValores(this.filtros.codigosTipoOperacao);
+    return this.tiposOperacao.filter(t => tiposSelecionados.includes(t.value));
+  }
+
+  private formatarValores(raw: any): string[] {
+    if (typeof raw === 'string') {
+      return raw.split(',');
+    }
+    return Array.isArray(raw) ? raw : [];
   }
 
   private atualizarFiltros(parciais: Partial<any>): void {
     const atualizados = { ...this.filtros, ...parciais };
     this.filtersService.atualizarFiltros(atualizados);
   }
+
   // Métodos de remoção
   removerCampo(campo: string): void {
     this.atualizarFiltros({ [campo]: null });
   }
 
   removerSituacao(id: number): void {
-    const raw = this.filtros.idsSituacoes;
-  
-    // Converte string "2,6" para [2, 6]
-    const ids = typeof raw === 'string'
-      ? raw.split(',').map(Number)
-      : Array.isArray(raw)
-        ? [...raw]
-        : [];
-  
-    const novasSituacoes = ids.filter((s: number) => s !== id);
-  
-    // Envia de volta no mesmo formato original: string separada por vírgula
-    this.atualizarFiltros({ idsSituacoes: novasSituacoes.join(',') });
+    this.removerValorArray('idsSituacoes', id);
   }
+
   removerTipoOperacao(value: string): void {
-    const raw = this.filtros.codigoTipoOperacao;
-  
-    const valores = typeof raw === 'string'
-      ? raw.split(',')
-      : Array.isArray(raw)
-        ? [...raw]
-        : [];
-  
-    const novos = valores.filter((v: string) => v !== value);
-  
-    this.atualizarFiltros({ codigoTipoOperacao: novos.join(',') });
+    this.removerValorArray('codigosTipoOperacao', value);
+  }
+
+  private removerValorArray(campo: string, valor: any): void {
+    const valores = this.formatarValores(this.filtros[campo]);
+    const novosValores = valores.filter(v => v.toString() !== valor.toString());
+    this.atualizarFiltros({ [campo]: novosValores.join(',') });
   }
 }

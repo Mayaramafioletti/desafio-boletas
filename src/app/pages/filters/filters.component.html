@@ -4,6 +4,7 @@
   (visibleChange)="visibleChange.emit($event)"
 >
   <div class="form">
+    <!-- Código da Operação -->
     <div class="flex-gap">
       <input
         type="number"
@@ -19,9 +20,11 @@
         [rounded]="true"
         [text]="true"
         severity="danger"
-        (click)="limparCodigoOperacao()"
+        (click)="limparCampo('codigoOperacao')"
       />
     </div>
+
+    <!-- Cliente -->
     <div class="flex-gap">
       <p-select
         [(ngModel)]="selectedCliente"
@@ -38,7 +41,7 @@
         [rounded]="true"
         [text]="true"
         severity="danger"
-        (click)="limparCliente()"
+        (click)="limparCampo('selectedCliente')"
       />
     </div>
 
@@ -59,7 +62,7 @@
         [rounded]="true"
         [text]="true"
         severity="danger"
-        (click)="limparFundo()"
+        (click)="limparCampo('selectedFundo')"
       />
     </div>
 
@@ -80,7 +83,7 @@
         [rounded]="true"
         [text]="true"
         severity="danger"
-        (click)="limparSituacoes()"
+        (click)="limparCampo('selectedSituacoes')"
       />
     </div>
 
@@ -101,7 +104,7 @@
         [rounded]="true"
         [text]="true"
         severity="danger"
-        (click)="limparTiposOperacao()"
+        (click)="limparCampo('selectedTiposOperacao')"
       />
     </div>
 
@@ -129,28 +132,28 @@
         [rounded]="true"
         [text]="true"
         severity="danger"
-        (click)="limparDatas()"
+        (click)="limparCampo('dataInicio'); limparCampo('dataFim')"
       />
     </div>
-    <p-message severity="error" variant="simple" size="small">{{
-      mensagemData
-    }}</p-message>
+    <p-message severity="error" variant="simple" size="small">
+      {{ mensagemData }}
+    </p-message>
 
     <!-- Valores -->
     <div class="flex-gap">
       <input
         type="number"
         pInputText
-        [ngModel]="valorFinanceiroMin"
-        (ngModelChange)="mensagemValor = ''; valorFinanceiroMin$.next($event)"
+        [(ngModel)]="valorFinanceiroMin"
+        (ngModelChange)="mensagemValor = ''; emitirFiltros()"
         placeholder="Valor mín."
         class="w-100"
       />
       <input
         type="number"
         pInputText
-        [ngModel]="valorFinanceiroMax"
-        (ngModelChange)="mensagemValor = ''; valorFinanceiroMax$.next($event)"
+        [(ngModel)]="valorFinanceiroMax"
+        (ngModelChange)="mensagemValor = ''; emitirFiltros()"
         placeholder="Valor máx."
         class="w-100"
       />
@@ -160,11 +163,11 @@
         [rounded]="true"
         [text]="true"
         severity="danger"
-        (click)="limparValores()"
+        (click)="limparCampo('valorFinanceiroMin'); limparCampo('valorFinanceiroMax')"
       />
     </div>
-    <p-message severity="error" variant="simple" size="small">{{
-      mensagemValor
-    }}</p-message>
+    <p-message severity="error" variant="simple" size="small">
+      {{ mensagemValor }}
+    </p-message>
   </div>
 </p-drawer>
