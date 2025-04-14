@@ -15,10 +15,7 @@
   #dt1
   [value]="boletas"
   dataKey="id"
-  [rows]="10"
-  [rowsPerPageOptions]="[10, 25, 50]"
   [loading]="loading"
-  [paginator]="true"
   (sortFunction)="customSort($event)"
   [customSort]="true"
   [globalFilterFields]="['nomeCliente', 'nomeFundo', 'nomeSituacao']"
@@ -77,3 +74,10 @@
     </tr>
   </ng-template>
 </p-table>
+<p-paginator 
+  (onPageChange)="aoMudarPagina($event)" 
+  [first]="first" 
+  [rows]="rows" 
+  [totalRecords]="totalRegistros" 
+  [rowsPerPageOptions]="rowsPerPageOptions" 
+/>

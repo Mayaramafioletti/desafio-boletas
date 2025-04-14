@@ -12,8 +12,7 @@ export class BoletaCotaFundoService {
 
   pesquisar(filtros: BoletaFiltro): Observable<ResultadoConsulta> {
     let params = new HttpParams();
-    console.log(params)
-
+  
     Object.entries(filtros).forEach(([key, value]) => {
       if (value !== undefined && value !== null) {
         if (Array.isArray(value)) {
@@ -23,7 +22,7 @@ export class BoletaCotaFundoService {
         }
       }
     });
-
+  
     return this.http.get<ResultadoConsulta>(this.baseUrl, { params });
   }
  
