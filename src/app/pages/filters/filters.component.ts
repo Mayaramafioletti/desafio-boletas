@@ -102,8 +102,8 @@ export class FiltersComponent implements OnInit {
             : filtros.idsSituacoes.split(',').map((id: string) => +id)
           : [];
 
-        this.selectedTiposOperacao = filtros.codigoTipoOperacao
-          ? filtros.codigoTipoOperacao.split(',')
+        this.selectedTiposOperacao = filtros.codigosTipoOperacao
+          ? filtros.codigosTipoOperacao.split(',')
           : [];
 
         this.codigoOperacao = filtros.idBoletaCotaFundo ?? null;
@@ -144,7 +144,7 @@ export class FiltersComponent implements OnInit {
         ? this.selectedSituacoes.join(',')
         : undefined,
       idBoletaCotaFundo: this.codigoOperacao ?? undefined,
-      codigoTipoOperacao: this.selectedTiposOperacao.length
+      codigosTipoOperacao: this.selectedTiposOperacao.length
         ? this.selectedTiposOperacao.join(',')
         : undefined,
       dataOperacaoDe: this.dataInicio

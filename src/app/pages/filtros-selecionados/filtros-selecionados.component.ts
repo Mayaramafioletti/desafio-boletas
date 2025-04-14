@@ -19,7 +19,11 @@ export class FiltrosSelecionadosComponent implements OnInit {
   situacoes: any[] = [];
 
   filtros: any = {};
-
+  tiposOperacao = [
+    { label: 'Aplicação', value: 'A' },
+    { label: 'Resgate Parcial', value: 'RP' },
+    { label: 'Resgate Total', value: 'RT' },
+  ];
   constructor(
     private clientesService: ClientesService,
     private fundosService: FundosService,
@@ -47,6 +51,17 @@ export class FiltrosSelecionadosComponent implements OnInit {
       .filter(s => this.filtros.idsSituacoes?.includes(s.id))
       .map(s => ({ id: s.id, nome: s.nome }));
   }
+  get nomesTiposOperacaoSelecionadas(): { label: string; value: string }[] {
+    const raw = this.filtros.codigosTipoOperacao;
+  
+    const valores = typeof raw === 'string'
+      ? raw.split(',')
+      : Array.isArray(raw)
+        ? raw
+        : [];
+  
+    return this.tiposOperacao.filter(t => valores.includes(t.value));
+  }
 
   private atualizarFiltros(parciais: Partial<any>): void {
     const atualizados = { ...this.filtros, ...parciais };
@@ -72,5 +87,17 @@ export class FiltrosSelecionadosComponent implements OnInit {
     // Envia de volta no mesmo formato original: string separada por vírgula
     this.atualizarFiltros({ idsSituacoes: novasSituacoes.join(',') });
   }
+  removerTipoOperacao(value: string): void {
+    const raw = this.filtros.codigoTipoOperacao;
   
+    const valores = typeof raw === 'string'
+      ? raw.split(',')
+      : Array.isArray(raw)
+        ? [...raw]
+        : [];
+  
+    const novos = valores.filter((v: string) => v !== value);
+  
+    this.atualizarFiltros({ codigoTipoOperacao: novos.join(',') });
+  }
 }

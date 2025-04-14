@@ -3,7 +3,7 @@ export interface BoletaFiltro {
     idCliente?: number;
     idFundo?: number;
     idsSituacoes?: string; // exemplo: '1,3,4'
-    codigoTipoOperacao?: string;
+    codigosTipoOperacao?: string;
     dataOperacaoDe?: string; // formato 'yyyy-MM-dd'
     dataOperacaoAte?: string;
     valorFinanceiroDe?: number;

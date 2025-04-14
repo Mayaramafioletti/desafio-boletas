@@ -62,7 +62,7 @@
   @include filtro-cores(#fff3e0, #e65100); // laranja pastel
 }
 
-:host ::ng-deep .filtro-operacao .p-button {
+:host ::ng-deep .filtro-operacao {
   @extend %filtro-base;
   @include filtro-cores(#ede7f6, #4527a0); // roxo pastel
 }
