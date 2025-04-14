@@ -22,7 +22,6 @@ Este projeto foi desenvolvido como parte de um desafio técnico. Ele apresenta u
 - 🧼 Código limpo e componentizado, seguindo boas práticas
 
 ## 🛠️ Como Rodar o Projeto
- - Pode entrar no link "" ou seguir os passos
 ### 1. Pré-requisitos
 
 - Node.js (versão 18+)
@@ -34,8 +33,8 @@ npm install -g @angular/cli
 ### 2. Clonando o Repositório
 
 ```bash
-git clone https://github.com/seu-usuario/seu-repositorio.git
-cd seu-repositorio
+git clone https://github.com/Mayaramafioletti/desafio-boletas.git 
+cd desafio-boletas
 ```
 
 ### 3. Instalando Dependências
