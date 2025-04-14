@@ -30,7 +30,7 @@ Este projeto foi desenvolvido como parte de um desafio técnico. Ele apresenta u
 
 ```bash
 npm install -g @angular/cli
-
+```
 ### 2. Clonando o Repositório
 
 ```bash
