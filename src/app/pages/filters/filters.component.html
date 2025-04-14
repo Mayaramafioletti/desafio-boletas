@@ -1,0 +1,124 @@
+<p-drawer
+  header="Filtros"
+  [(visible)]="visible"
+  (visibleChange)="visibleChange.emit($event)"
+>
+  <div class="form">
+    <div class="flex-gap">
+      <input
+        type="number"
+        pInputText
+        placeholder="Cod. Operação"
+        [(ngModel)]="codigoOperacao"
+        (ngModelChange)="emitirFiltros()"
+        class="w-100"
+      />
+      <p-button icon="pi pi-trash" size="small" [rounded]="true" [text]="true" severity="danger" (click)="limparCodigoOperacao()" />
+    </div>
+    <div class="flex-gap">
+      <p-select
+        [(ngModel)]="selectedCliente"
+        [options]="clientes"
+        optionLabel="nome"
+        optionValue="id"
+        placeholder="Cliente"
+        (onChange)="emitirFiltros()"
+        class="w-100"
+      />
+      <p-button icon="pi pi-trash" size="small" [rounded]="true" [text]="true" severity="danger" (click)="limparCliente()" />
+    </div>
+    
+    <!-- Fundo -->
+    <div class="flex-gap">
+      <p-select
+        [(ngModel)]="selectedFundo"
+        [options]="fundos"
+        optionLabel="nome"
+        optionValue="id"
+        placeholder="Fundo"
+        (onChange)="emitirFiltros()"
+        class="w-100"
+      />
+      <p-button icon="pi pi-trash" size="small" [rounded]="true" [text]="true" severity="danger" (click)="limparFundo()" />
+    </div>
+    
+    <!-- Situações -->
+    <div class="flex-gap">
+      <p-multiSelect
+        [(ngModel)]="selectedSituacoes"
+        [options]="situacoes"
+        optionLabel="nome"
+        optionValue="id"
+        placeholder="Situações"
+        (onChange)="emitirFiltros()"
+        class="w-100"
+      />
+      <p-button icon="pi pi-trash" size="small" [rounded]="true" [text]="true" severity="danger" (click)="limparSituacoes()" />
+    </div>
+    
+    <!-- Tipo de Operação -->
+    <div class="flex-gap">
+      <p-multiSelect
+        [(ngModel)]="selectedTiposOperacao"
+        [options]="tiposOperacao"
+        optionLabel="label"
+        optionValue="value"
+        placeholder="Tipo de Operação"
+        (onChange)="emitirFiltros()"
+        class="w-100"
+      />
+      <p-button icon="pi pi-trash" size="small" [rounded]="true" [text]="true" severity="danger" (click)="limparTiposOperacao()" />
+    </div>
+    
+    <!-- Datas -->
+    <div class="flex-gap">
+      <p-calendar
+        [(ngModel)]="dataInicio"
+        placeholder="Data Inicial"
+        dateFormat="dd/mm/yy"
+        [showIcon]="true"
+        (onSelect)="emitirFiltros()"
+        class="w-100"
+      />
+      <p-calendar
+        [(ngModel)]="dataFim"
+        placeholder="Data Final"
+        dateFormat="dd/mm/yy"
+        [showIcon]="true"
+        (onSelect)="emitirFiltros()"
+        class="w-100"
+      />
+      <p-button
+        icon="pi pi-trash"
+        size="small"
+        [rounded]="true"
+        [text]="true"
+        severity="danger"
+        (click)="limparDatas()"
+      />
+    </div>
+    
+    <!-- Valores -->
+    <div class="flex-gap">
+      <input
+        type="number"
+        pInputText
+        [ngModel]="valorFinanceiroMin"
+        (ngModelChange)="valorFinanceiroMin$.next($event)"
+        placeholder="Valor mín."
+        class="w-100"
+      />
+      <input
+        type="number"
+        pInputText
+        [ngModel]="valorFinanceiroMax"
+        (ngModelChange)="valorFinanceiroMax$.next($event)"
+        placeholder="Valor máx."
+        class="w-100"
+      />
+      <p-button icon="pi pi-trash" size="small" [rounded]="true" [text]="true" severity="danger" (click)="limparValores()" />
+    </div>
+
+    
+  </div>
+</p-drawer>

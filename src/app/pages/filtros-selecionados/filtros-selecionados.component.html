@@ -1,0 +1,115 @@
+<div class="filtros-container"> 
+  <ng-container *ngIf="nomeCliente">
+    <p-button
+      class="filtro-cliente"
+      size="small"
+      [rounded]="true"
+      severity="secondary"
+      [label]="nomeCliente"
+      icon="pi pi-times"
+      iconPos="right"
+      (click)="removerCampo('idCliente')"
+    />
+  </ng-container>
+
+  <ng-container *ngIf="nomeFundo">
+    <p-button
+      class="filtro-fundo"
+      size="small"
+      [rounded]="true"
+      severity="secondary"
+      [label]="nomeFundo"
+      icon="pi pi-times"
+      iconPos="right"
+      (click)="removerCampo('idFundo')"
+    />
+  </ng-container>
+
+  <div *ngFor="let situacao of nomesSituacoesSelecionadas">
+    <button
+      type="button"
+      class="p-button p-button-sm p-button-rounded p-button-secondary filtro-situacao"
+      (click)="removerSituacao(situacao.id)">
+      {{ situacao.nome }}
+      <i class="pi pi-times" style="margin-left: .5rem"></i>
+    </button>
+  </div>
+
+  <ng-container *ngIf="filtros.codigoTipoOperacao">
+    <p-button
+      class="filtro-operacao"
+      size="small"
+      [rounded]="true"
+      severity="secondary"
+      [label]="filtros.codigoTipoOperacao"
+      icon="pi pi-times"
+      iconPos="right"
+      (click)="removerCampo('codigoTipoOperacao')"
+    />
+  </ng-container>
+
+  <ng-container *ngIf="filtros.idBoletaCotaFundo">
+    <p-button
+      class="filtro-boleta"
+      size="small"
+      [rounded]="true"
+      severity="secondary"
+      [label]="filtros.idBoletaCotaFundo"
+      icon="pi pi-times"
+      iconPos="right"
+      (click)="removerCampo('idBoletaCotaFundo')"
+    />
+  </ng-container>
+
+  <ng-container *ngIf="filtros.dataOperacaoDe">
+    <p-button
+      class="filtro-data"
+      size="small"
+      [rounded]="true"
+      severity="secondary"
+      [label]="(filtros.dataOperacaoDe | date: 'dd/MM/yyyy') ?? undefined"
+      icon="pi pi-times"
+      iconPos="right"
+      (click)="removerCampo('dataOperacaoDe')"
+    />
+  </ng-container>
+
+  <ng-container *ngIf="filtros.dataOperacaoAte">
+    <p-button
+      class="filtro-data"
+      size="small"
+      [rounded]="true"
+      severity="secondary"
+      [label]="(filtros.dataOperacaoAte | date: 'dd/MM/yyyy') ?? undefined"
+      icon="pi pi-times"
+      iconPos="right"
+      (click)="removerCampo('dataOperacaoAte')"
+    />
+  </ng-container>
+
+  <ng-container *ngIf="filtros.valorFinanceiroDe">
+    <p-button
+      class="filtro-valor"
+      size="small"
+      [rounded]="true"
+      severity="secondary"
+      [label]="(filtros.valorFinanceiroDe | currency: 'BRL' : 'symbol' : '1.0-2') ?? undefined"
+      icon="pi pi-times"
+      iconPos="right"
+      (click)="removerCampo('valorFinanceiroDe')"
+    />
+  </ng-container>
+
+  <ng-container *ngIf="filtros.valorFinanceiroAte">
+    <p-button
+      class="filtro-valor"
+      size="small"
+      [rounded]="true"
+      severity="secondary"
+      [label]="(filtros.valorFinanceiroAte | currency: 'BRL' : 'symbol' : '1.0-2') ?? undefined"
+      icon="pi pi-times"
+      iconPos="right"
+      (click)="removerCampo('valorFinanceiroAte')"
+    />
+  </ng-container>
+</div>

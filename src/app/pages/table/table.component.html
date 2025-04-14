@@ -1,3 +1,16 @@
+<!-- Botões acima da tabela -->
+
+<div class="flex-gap">
+  <p-button  size="small" icon="pi pi-filter" label="Filtros" (click)="abrirDrawer()" />
+  <p-button size="small" severity="danger" variant="text" label="Limpar" [outlined]="true" (click)="clear(dt1)" />
+</div>
+<app-filtros-selecionados  />
+<app-filters
+  [(visible)]="drawerVisible"
+>
+</app-filters>
+
+
 <p-table
   #dt1
   [value]="boletas"
@@ -6,246 +19,41 @@
   [rowsPerPageOptions]="[10, 25, 50]"
   [loading]="loading"
   [paginator]="true"
+  (sortFunction)="customSort($event)"
+  [customSort]="true"
   [globalFilterFields]="['nomeCliente', 'nomeFundo', 'nomeSituacao']"
 >
-  <ng-template #caption>
-    <div class="flex">
-      <p-button
-        label="Limpar"
-        [outlined]="true"
-        icon="pi pi-filter-slash"
-        (click)="clear(dt1)"
-      />
-    </div>
-  </ng-template>
-
   <ng-template pTemplate="header">
     <tr>
-      <th>
-        <div class="header">
-          Cód. Operação
-          <p-columnFilter
-            type="numeric"
-            field="id"
-            display="menu"
-            [showMatchModes]="false"
-            [showOperator]="false"
-            [showAddButton]="false"
-            [showApplyButton]="false"
-          >
-            <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-              <input
-                type="number"
-                pInputText
-                [(ngModel)]="codigoOperacao"
-                placeholder="Digite o código"
-                (ngModelChange)="aplicarFiltros()"
-                class="w-full"
-              />
-            </ng-template>
-          </p-columnFilter>
-        </div>
+      <th pSortableColumn="id">Cód. Operação <p-sortIcon field="id" /></th>
+      <th>ID Cliente</th>
+      <th pSortableColumn="cpfCnpjCliente">
+        CPF/CNPJ Cliente <p-sortIcon field="cpfCnpjCliente" />
       </th>
-  
-      <th>
-        <div class="header">
-          ID Cliente
-        </div>
+      <th pSortableColumn="nomeCliente">
+        Cliente <p-sortIcon field="nomeCliente" />
       </th>
-  
-      <th>
-        <div class="header">
-          CPF/CNPJ Cliente
-        </div>
+      <th>ID Fundo</th>
+      <th pSortableColumn="cnpjFundo">
+        CNPJ Fundo <p-sortIcon field="cnpjFundo" />
       </th>
-  
-      <th>
-        <div class="header">
-          Cliente
-          <p-columnFilter
-            field="idCliente"
-            matchMode="in"
-            display="menu"
-            [showMatchModes]="false"
-            [showOperator]="false"
-            [showAddButton]="false"
-            [showApplyButton]="false"
-          >
-            <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-              <p-select
-                [(ngModel)]="selectedCliente"
-                [options]="clientes"
-                optionLabel="nome"
-                optionValue="id"
-                placeholder="Selecione os clientes"
-                (onChange)="aplicarFiltros()"
-                class="w-full"
-              />
-            </ng-template>
-          </p-columnFilter>
-        </div>
+      <th pSortableColumn="nomeFundo">
+        Fundo <p-sortIcon field="nomeFundo" />
       </th>
-  
-      <th>
-        <div class="header">
-          ID Fundo
-        </div>
+      <th pSortableColumn="nomeSituacao">
+        Situação <p-sortIcon field="nomeSituacao" />
       </th>
-  
-      <th>
-        <div class="header">
-          CNPJ Fundo
-        </div>
+      <th pSortableColumn="codigoTipoOperacao">
+        Tipo Operação <p-sortIcon field="codigoTipoOperacao" />
       </th>
-  
-      <th>
-        <div class="header">
-          Fundo
-          <p-columnFilter
-            field="idFundo"
-            matchMode="in"
-            display="menu"
-            [showMatchModes]="false"
-            [showOperator]="false"
-            [showAddButton]="false"
-            [showApplyButton]="false"
-          >
-            <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-              <p-select
-                [(ngModel)]="selectedFundo"
-                [options]="fundos"
-                optionLabel="nome"
-                optionValue="id"
-                placeholder="Selecione os fundos"
-                (onChange)="aplicarFiltros()"
-                class="w-full"
-              />
-            </ng-template>
-          </p-columnFilter>
-        </div>
+      <th pSortableColumn="dataOperacao">
+        Data <p-sortIcon field="dataOperacao" />
       </th>
-  
-      <th>
-        <div class="header">
-          Situação
-          <p-columnFilter
-            field="idsSituacoes"
-            matchMode="in"
-            display="menu"
-            [showMatchModes]="false"
-            [showOperator]="false"
-            [showAddButton]="false"
-            [showApplyButton]="false"
-          >
-            <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-              <p-multiSelect
-                [(ngModel)]="selectedSituacoes"
-                [options]="situacoes"
-                optionLabel="nome"
-                optionValue="id"
-                placeholder="Selecione as situações"
-                (onChange)="aplicarFiltros()"
-                class="w-full"
-              />
-            </ng-template>
-          </p-columnFilter>
-        </div>
-      </th>
-  
-      <th>
-        <div class="header">
-          Tipo Operação
-          <p-columnFilter
-            field="tipoOperacao"
-            matchMode="in"
-            display="menu"
-            [showMatchModes]="false"
-            [showOperator]="false"
-            [showAddButton]="false"
-            [showApplyButton]="false"
-          >
-            <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-              <p-multiSelect
-                [(ngModel)]="selectedTiposOperacao"
-                [options]="tiposOperacao"
-                optionLabel="label"
-                optionValue="value"
-                placeholder="Selecione os tipos"
-                (onChange)="aplicarFiltros()"
-                class="w-full"
-              />
-            </ng-template>
-          </p-columnFilter>
-        </div>
-      </th>
-  
-      <th>
-        <div class="header">
-          Data
-          <p-columnFilter
-            field="dataOperacao"
-            matchMode="between"
-            display="menu"
-            [showMatchModes]="false"
-            [showOperator]="false"
-            [showAddButton]="false"
-            [showApplyButton]="false"
-          >
-            <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-              <p-calendar
-                [(ngModel)]="rangeDatas"
-                selectionMode="range"
-                [numberOfMonths]="2"
-                placeholder="Selecione o intervalo"
-                dateFormat="dd/mm/yy"
-                [showIcon]="true"
-                (onSelect)="aplicarFiltros()"
-                class="w-full"
-              />
-            </ng-template>
-          </p-columnFilter>
-        </div>
-      </th>
-  
-      <th>
-        <div class="header">
-          Valor
-          <p-columnFilter
-            filterMenuIcon="pi pi-sliders-h"
-            type="numeric"
-            field="valorFinanceiro"
-            display="menu"
-            [showMatchModes]="false"
-            [showOperator]="false"
-            [showAddButton]="false"
-            [showApplyButton]="false"
-          >
-            <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-              <div class="flex gap-2 w-full">
-                <input
-                  type="number"
-                  pInputText
-                  [ngModel]="valorFinanceiroMin"
-                  (ngModelChange)="valorFinanceiroMin$.next($event)"
-                  placeholder="Mín."
-                  class="w-full"
-                />
-                <input
-                  type="number"
-                  pInputText
-                  [ngModel]="valorFinanceiroMax"
-                  (ngModelChange)="valorFinanceiroMax$.next($event)"
-                  placeholder="Máx."
-                  class="w-full"
-                />
-              </div>
-            </ng-template>
-          </p-columnFilter>
-        </div>
+      <th pSortableColumn="valorFinanceiro">
+        Valor <p-sortIcon field="valorFinanceiro" />
       </th>
     </tr>
   </ng-template>
-  
 
   <ng-template pTemplate="body" let-boleta>
     <tr>

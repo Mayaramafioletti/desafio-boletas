@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { TagModule } from 'primeng/tag';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
@@ -17,7 +17,11 @@ import { FundosService } from '../../services/fundos.service';
 import { SituacoesService } from '../../services/situacoes.service';
 import { Table, TableModule } from 'primeng/table';
 import { CalendarModule } from 'primeng/calendar';
-import { debounceTime, Subject } from 'rxjs';
+import { debounceTime, Subject, takeUntil } from 'rxjs';
+import { FiltersComponent } from '../filters/filters.component';
+import { SortEvent } from 'primeng/api';
+import { FiltrosSelecionadosComponent } from '../filtros-selecionados/filtros-selecionados.component';
+import { FiltersService } from '../../services/filters.service';
 
 @Component({
   selector: 'app-table',
@@ -35,123 +39,102 @@ import { debounceTime, Subject } from 'rxjs';
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
-    CalendarModule
+    CalendarModule,
+    FiltersComponent,
+    FiltrosSelecionadosComponent,
   ],
   templateUrl: './table.component.html',
   styleUrl: './table.component.scss',
 })
 export class TableComponent implements OnInit {
+  @ViewChild('dt1') dt1!: Table;
   boletas: BoletaCotaFundo[] = [];
+  initialValue: BoletaCotaFundo[] = [];
   loading: boolean = true;
   searchValue: string | undefined;
-  tiposOperacao: { label: string; value: string }[] = [
-    { label: 'Aplicação', value: 'A' },
-    { label: 'Resgate Parcial', value: 'RP' },
-    { label: 'Resgate Total', value: 'RT' },
-  ];
-  
-  selectedTiposOperacao: string[] = [];
-  clientes: any[] = [];
-  fundos: any[] = [];
-  situacoes: any[] = [];
-  codigoOperacao: number | null = null;
-  selectedCliente: number | null = null;
-  selectedFundo: number | null = null;
-  selectedSituacoes: number[] = [];
-  rangeDatas: Date[] = [];
-  valorFinanceiroMin: number | null = null;
-valorFinanceiroMax: number | null = null;
-  valorFinanceiroMin$: Subject<number> = new Subject<number>();
-valorFinanceiroMax$: Subject<number> = new Subject<number>();
+  drawerVisible: boolean = false; // controle da visibilidade do drawer
+  isSorted: boolean | null = null;
+  private destroy$ = new Subject<void>();
 
   constructor(
     private boletaService: BoletaCotaFundoService,
-    private clientesService: ClientesService,
-    private fundosService: FundosService,
-    private situacoesService: SituacoesService
+    private filtersService: FiltersService
   ) {}
 
   ngOnInit() {
-    this.clientesService.getClientes().subscribe((res) => (this.clientes = res));
-    this.fundosService.getFundos().subscribe((res) => (this.fundos = res));
-    this.situacoesService.getSituacoes().subscribe((res) => {
-      this.situacoes = res;
-      console.log(res)
-      console.log('Situações carregadas:', this.situacoes);
-    });
-    this.valorFinanceiroMin$
-    .pipe(debounceTime(400))
-    .subscribe((val) => {
-      this.valorFinanceiroMin = val;
-      this.aplicarFiltros();
-    });
+    this.inicializarFiltros();
+  }
+  
+  inicializarFiltros() {
+    this.filtersService.filtros$
+      .pipe(debounceTime(300), takeUntil(this.destroy$))
+      .subscribe((filtros) => {
+        this.aplicarFiltros(filtros || {});
+      });
+  
+    if (!this.filtersService.obterFiltrosAtual()) {
+      this.filtersService.atualizarFiltros({});
+    }
+  }
+  
 
-  this.valorFinanceiroMax$
-    .pipe(debounceTime(400))
-    .subscribe((val) => {
-      this.valorFinanceiroMax = val;
-      this.aplicarFiltros();
-    });
-    this.aplicarFiltros(); // Buscar dados iniciais
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
-  aplicarFiltros() {
-    const filtros: any = {
-      page: 0,
-      size: 50,
-    };
-
-    if (this.selectedCliente) {
-      console.log(this.selectedCliente)
-      filtros['idCliente'] = this.selectedCliente;
-    }
-
-    if (this.selectedFundo) {
-      filtros['idFundo'] = this.selectedFundo;
-    }
-
-    if (this.selectedSituacoes.length > 0) {
-      filtros['idsSituacoes'] = this.selectedSituacoes.join(',');
-    }
-    if (this.codigoOperacao !== null) {
-      filtros['idBoletaCotaFundo'] = this.codigoOperacao;
-    }
-    if (this.selectedTiposOperacao.length > 0) {
-      filtros['codigoTipoOperacao'] = this.selectedTiposOperacao.join(',');
-    }
-    if (this.rangeDatas && this.rangeDatas.length === 2) {
-      const [dataInicio, dataFim] = this.rangeDatas;
-      if (dataInicio && dataFim) {
-        filtros['dataOperacaoDe'] = dataInicio.toISOString().split('T')[0];
-        filtros['dataOperacaoAte'] = dataFim.toISOString().split('T')[0];
-      }
-    }
-    if (this.valorFinanceiroMin !== null) {
-      filtros['valorFinanceiroDe'] = this.valorFinanceiroMin;
-    }
-    if (this.valorFinanceiroMax !== null) {
-      filtros['valorFinanceiroAte'] = this.valorFinanceiroMax;
-    }
+  aplicarFiltros(filtros: any) {
     this.loading = true;
-
     this.boletaService.pesquisar(filtros).subscribe({
       next: (res) => {
-        this.boletas = res.elementos;
+        this.boletas = res.elementos || [];
+        this.initialValue = [...res.elementos];
         this.loading = false;
       },
       error: (err) => {
-        console.error('Erro ao aplicar filtros:', err);
+        console.error('Erro ao buscar boletas:', err);
         this.loading = false;
       },
     });
   }
-
-  clear(table: Table) {
+  clear(table: any) {
     table.clear();
-    this.searchValue = '';
-    this.selectedCliente = null;
-    this.selectedFundo = null;
-    this.selectedSituacoes = [];
-    this.aplicarFiltros();
+    this.filtersService.atualizarFiltros({});
+  }
+
+  abrirDrawer() {
+    this.drawerVisible = true;
+  }
+  customSort(event: SortEvent) {
+    if (this.isSorted == null || this.isSorted === undefined) {
+      this.isSorted = true;
+      this.sortTableData(event);
+    } else if (this.isSorted == true) {
+      this.isSorted = false;
+      this.sortTableData(event);
+    } else if (this.isSorted == false) {
+      this.isSorted = null;
+      this.boletas = [...this.initialValue];
+      this.dt1.reset();
+    }
+  }
+
+  sortTableData(event: SortEvent) {
+    if (!event.field) return;
+
+    event.data!.sort((data1, data2) => {
+      const value1 = data1[event.field!];
+      const value2 = data2[event.field!];
+      let result = 0;
+
+      if (value1 == null && value2 != null) result = -1;
+      else if (value1 != null && value2 == null) result = 1;
+      else if (value1 == null && value2 == null) result = 0;
+      else if (typeof value1 === 'string' && typeof value2 === 'string')
+        result = value1.localeCompare(value2);
+      else result = value1 < value2 ? -1 : value1 > value2 ? 1 : 0;
+
+      return event.order! * result;
+    });
   }
 }

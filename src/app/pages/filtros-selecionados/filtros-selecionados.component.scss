@@ -1,0 +1,82 @@
+.filtros-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.75rem 0;
+  align-items: center;
+  justify-content: end;
+}
+
+.filtro-item {
+  display: flex;
+  align-items: center;
+  padding: 0.4rem 0.8rem;
+  border-radius: 1.5rem;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease-in-out;
+  max-width: 100%;
+
+  &:hover {
+    transform: scale(1.03);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+  }
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  margin-left: 0.5rem;
+  font-size: 1rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+}
+
+// Placeholder com estilos base de todos os filtros
+%filtro-base {
+  font-size: 12px;
+  font-weight: 500;
+  border: none !important;
+}
+
+// Mixin para aplicar cor de fundo e texto
+@mixin filtro-cores($bg-color, $text-color) {
+  background-color: $bg-color !important;
+  color: $text-color !important;
+}
+
+// Estilos específicos com uso do placeholder + mixin
+:host ::ng-deep .filtro-cliente .p-button {
+  @extend %filtro-base;
+  @include filtro-cores(#e0f7fa, #004d40); // azul pastel
+}
+
+:host ::ng-deep .filtro-fundo .p-button {
+  @extend %filtro-base;
+  @include filtro-cores(#f1f8e9, #33691e); // verde pastel
+}
+
+:host ::ng-deep .filtro-situacao {
+  @extend %filtro-base;
+  @include filtro-cores(#fff3e0, #e65100); // laranja pastel
+}
+
+:host ::ng-deep .filtro-operacao .p-button {
+  @extend %filtro-base;
+  @include filtro-cores(#ede7f6, #4527a0); // roxo pastel
+}
+
+:host ::ng-deep .filtro-data .p-button {
+  @extend %filtro-base;
+  @include filtro-cores(#fce4ec, #880e4f); // rosa pastel
+}
+
+:host ::ng-deep .filtro-valor .p-button {
+  @extend %filtro-base;
+  @include filtro-cores(#e3f2fd, #0d47a1); // azul claro pastel
+}
+:host ::ng-deep .filtro-boleta .p-button {
+  @extend %filtro-base;
+  @include filtro-cores(#f1f2d0, #8f8639); // azul claro pastel
+}

@@ -1,0 +1,17 @@
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.flex-gap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+::ng-deep .p-drawer-left {
+ width: 30rem !important;
+}
+  .w-100{
+width: 100%;
+  }
