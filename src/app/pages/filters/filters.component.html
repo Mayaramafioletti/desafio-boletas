@@ -110,7 +110,7 @@
 
     <!-- Datas -->
     <div class="flex-gap">
-      <p-calendar
+      <p-datepicker
         [(ngModel)]="dataInicio"
         placeholder="Data Inicial"
         dateFormat="dd/mm/yy"
@@ -118,7 +118,7 @@
         (onSelect)="mensagemData = ''; emitirFiltros()"
         class="w-100"
       />
-      <p-calendar
+      <p-datepicker
         [(ngModel)]="dataFim"
         placeholder="Data Final"
         dateFormat="dd/mm/yy"

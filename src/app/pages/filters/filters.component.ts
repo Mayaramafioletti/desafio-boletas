@@ -14,6 +14,7 @@ import { ClientesService } from '../../services/clientes.service';
 import { FundosService } from '../../services/fundos.service';
 import { SituacoesService } from '../../services/situacoes.service';
 import { FiltersService } from '../../services/filters.service';
+import { DatePickerModule } from 'primeng/datepicker';
 type FiltrosKeys =
   | 'selectedCliente'
   | 'selectedFundo'
@@ -35,7 +36,7 @@ type FiltrosKeys =
     ButtonModule,
     SelectModule,
     MultiSelectModule,
-    CalendarModule,
+    DatePickerModule ,
     InputTextModule,
     MessageModule,
   ],
