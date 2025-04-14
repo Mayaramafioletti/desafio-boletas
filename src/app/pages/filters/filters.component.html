@@ -13,7 +13,14 @@
         (ngModelChange)="emitirFiltros()"
         class="w-100"
       />
-      <p-button icon="pi pi-trash" size="small" [rounded]="true" [text]="true" severity="danger" (click)="limparCodigoOperacao()" />
+      <p-button
+        icon="pi pi-trash"
+        size="small"
+        [rounded]="true"
+        [text]="true"
+        severity="danger"
+        (click)="limparCodigoOperacao()"
+      />
     </div>
     <div class="flex-gap">
       <p-select
@@ -25,9 +32,16 @@
         (onChange)="emitirFiltros()"
         class="w-100"
       />
-      <p-button icon="pi pi-trash" size="small" [rounded]="true" [text]="true" severity="danger" (click)="limparCliente()" />
+      <p-button
+        icon="pi pi-trash"
+        size="small"
+        [rounded]="true"
+        [text]="true"
+        severity="danger"
+        (click)="limparCliente()"
+      />
     </div>
-    
+
     <!-- Fundo -->
     <div class="flex-gap">
       <p-select
@@ -39,9 +53,16 @@
         (onChange)="emitirFiltros()"
         class="w-100"
       />
-      <p-button icon="pi pi-trash" size="small" [rounded]="true" [text]="true" severity="danger" (click)="limparFundo()" />
+      <p-button
+        icon="pi pi-trash"
+        size="small"
+        [rounded]="true"
+        [text]="true"
+        severity="danger"
+        (click)="limparFundo()"
+      />
     </div>
-    
+
     <!-- Situações -->
     <div class="flex-gap">
       <p-multiSelect
@@ -53,9 +74,16 @@
         (onChange)="emitirFiltros()"
         class="w-100"
       />
-      <p-button icon="pi pi-trash" size="small" [rounded]="true" [text]="true" severity="danger" (click)="limparSituacoes()" />
+      <p-button
+        icon="pi pi-trash"
+        size="small"
+        [rounded]="true"
+        [text]="true"
+        severity="danger"
+        (click)="limparSituacoes()"
+      />
     </div>
-    
+
     <!-- Tipo de Operação -->
     <div class="flex-gap">
       <p-multiSelect
@@ -67,9 +95,16 @@
         (onChange)="emitirFiltros()"
         class="w-100"
       />
-      <p-button icon="pi pi-trash" size="small" [rounded]="true" [text]="true" severity="danger" (click)="limparTiposOperacao()" />
+      <p-button
+        icon="pi pi-trash"
+        size="small"
+        [rounded]="true"
+        [text]="true"
+        severity="danger"
+        (click)="limparTiposOperacao()"
+      />
     </div>
-    
+
     <!-- Datas -->
     <div class="flex-gap">
       <p-calendar
@@ -77,7 +112,7 @@
         placeholder="Data Inicial"
         dateFormat="dd/mm/yy"
         [showIcon]="true"
-        (onSelect)="emitirFiltros()"
+        (onSelect)="mensagemData = ''; emitirFiltros()"
         class="w-100"
       />
       <p-calendar
@@ -85,7 +120,7 @@
         placeholder="Data Final"
         dateFormat="dd/mm/yy"
         [showIcon]="true"
-        (onSelect)="emitirFiltros()"
+        (onSelect)="mensagemData = ''; emitirFiltros()"
         class="w-100"
       />
       <p-button
@@ -97,14 +132,17 @@
         (click)="limparDatas()"
       />
     </div>
-    
+    <p-message severity="error" variant="simple" size="small">{{
+      mensagemData
+    }}</p-message>
+
     <!-- Valores -->
     <div class="flex-gap">
       <input
         type="number"
         pInputText
         [ngModel]="valorFinanceiroMin"
-        (ngModelChange)="valorFinanceiroMin$.next($event)"
+        (ngModelChange)="mensagemValor = ''; valorFinanceiroMin$.next($event)"
         placeholder="Valor mín."
         class="w-100"
       />
@@ -112,13 +150,21 @@
         type="number"
         pInputText
         [ngModel]="valorFinanceiroMax"
-        (ngModelChange)="valorFinanceiroMax$.next($event)"
+        (ngModelChange)="mensagemValor = ''; valorFinanceiroMax$.next($event)"
         placeholder="Valor máx."
         class="w-100"
       />
-      <p-button icon="pi pi-trash" size="small" [rounded]="true" [text]="true" severity="danger" (click)="limparValores()" />
+      <p-button
+        icon="pi pi-trash"
+        size="small"
+        [rounded]="true"
+        [text]="true"
+        severity="danger"
+        (click)="limparValores()"
+      />
     </div>
-
-    
+    <p-message severity="error" variant="simple" size="small">{{
+      mensagemValor
+    }}</p-message>
   </div>
 </p-drawer>
