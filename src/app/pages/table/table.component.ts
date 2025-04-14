@@ -59,6 +59,16 @@ export class TableComponent implements OnInit {
   rows:number = 10;
   rowsPerPageOptions: number[] = [];
   private destroy$ = new Subject<void>();
+  private readonly sortFieldMap: Record<string, string> = {
+    id: 'id',
+    nomeCliente: 'cliente.nome',
+    nomeFundo: 'fundo.nome',
+    cnpjFundo: 'fundo.cnpj',
+    situacao: 'situacao.nome',
+    tipoOperacao: 'codigoTipoOperacao',
+    dataOperacao: 'dataOperacao',
+    valor: 'valorFinanceiro'
+  };
 
   constructor(
     private boletaService: BoletaCotaFundoService,
@@ -106,6 +116,7 @@ export class TableComponent implements OnInit {
     this.boletaService.pesquisar(filtrosComPaginacao).subscribe({
       next: (res) => {
         this.boletas = res.elementos || [];
+        this.initialValue = [...this.boletas];
         this.totalRegistros = res.totalElementos;
         this.rows = res.tamanhoPagina; // ← opcional, depende se sua API retorna isso
         this.loading = false;
@@ -127,7 +138,8 @@ export class TableComponent implements OnInit {
     const filtrosComPaginacao = {
       ...filtrosAtuais,
       page: event.page,
-      size: event.rows
+      size: event.rows,
+      sort: filtrosAtuais.sort // manter o sort se existir
     };
   
     this.aplicarFiltros(filtrosComPaginacao);
@@ -142,21 +154,34 @@ export class TableComponent implements OnInit {
     this.drawerVisible = true;
   }
   customSort(event: SortEvent) {
-    console.log(event)
-    if (this.isSorted == null || this.isSorted === undefined) {
-      this.isSorted = true;
-      this.sortTableData(event);
-    } else if (this.isSorted == true) {
-      this.isSorted = false;
-      this.sortTableData(event);
-    } else if (this.isSorted == false) {
+    if (!event.field || event.order === 0) {
       this.isSorted = null;
       this.boletas = [...this.initialValue];
       this.dt1.reset();
+      const filtrosAtuais = this.filtersService.obterFiltrosAtual() || {};
+      if (filtrosAtuais.sort) {
+        this.filtersService.atualizarFiltros({ ...filtrosAtuais, sort: undefined });
+      }
+      return;
     }
+    const fieldApi = this.sortFieldMap[event.field] || event.field;
+
+    const direction = event.order === 1 ? 'asc' : 'desc';
+    const sortParam = [`${fieldApi},${direction}`];
+  
+    const filtrosAtuais = this.filtersService.obterFiltrosAtual() || {};
+    const sortAtual = filtrosAtuais.sort ?? [];
+    const sortNovo = sortParam;
+    console.log(sortNovo)
+  
+    if (JSON.stringify(sortAtual) === JSON.stringify(sortNovo)) return;
+  
+    this.isSorted = event.order === 1;
+    this.filtersService.atualizarFiltros({ ...filtrosAtuais, sort: sortNovo });
   }
 
   sortTableData(event: SortEvent) {
+    console.log(event)
     if (!event.field) return;
 
     event.data!.sort((data1, data2) => {

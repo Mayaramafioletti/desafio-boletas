@@ -138,24 +138,25 @@ export class FiltersComponent implements OnInit {
     }
 
     const filtros = {
-      idCliente: this.selectedCliente,
-      idFundo: this.selectedFundo,
+      idCliente: this.selectedCliente ?? undefined,
+      idFundo: this.selectedFundo ?? undefined,
       idsSituacoes: this.selectedSituacoes.length
         ? this.selectedSituacoes.join(',')
-        : null,
-      idBoletaCotaFundo: this.codigoOperacao,
+        : undefined,
+      idBoletaCotaFundo: this.codigoOperacao ?? undefined,
       codigoTipoOperacao: this.selectedTiposOperacao.length
         ? this.selectedTiposOperacao.join(',')
-        : null,
+        : undefined,
       dataOperacaoDe: this.dataInicio
         ? this.dataInicio.toISOString().split('T')[0]
-        : null,
+        : undefined,
       dataOperacaoAte: this.dataFim
         ? this.dataFim.toISOString().split('T')[0]
-        : null,
-      valorFinanceiroDe: this.valorFinanceiroMin,
-      valorFinanceiroAte: this.valorFinanceiroMax,
+        : undefined,
+      valorFinanceiroDe: this.valorFinanceiroMin ?? undefined,
+      valorFinanceiroAte: this.valorFinanceiroMax ?? undefined,
     };
+    
 
     this.filtersService.atualizarFiltros(filtros);
   }

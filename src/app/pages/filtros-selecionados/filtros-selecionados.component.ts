@@ -49,9 +49,7 @@ export class FiltrosSelecionadosComponent implements OnInit {
   }
 
   private atualizarFiltros(parciais: Partial<any>): void {
-    console.log(parciais)
     const atualizados = { ...this.filtros, ...parciais };
-    console.log('Atualizando filtros com:', atualizados);
     this.filtersService.atualizarFiltros(atualizados);
   }
   // Métodos de remoção
